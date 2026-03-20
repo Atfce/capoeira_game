@@ -1,0 +1,101 @@
+{
+  "project": "Pose Detection Web App",
+  "branchName": "ralph/pose-detection-webapp",
+  "description": "创建一个基于 Vue 3 和 TypeScript 的单页应用(SPA),使用电脑摄像头实时捕获用户画面,通过 TensorFlow.js/MoveNet 进行人体姿势识别,并在画面上实时绘制人体骨架。该应用主要用于游戏/娱乐互动场景,目标是达到 60 FPS 的流畅体验。",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "项目初始化和技术栈搭建",
+      "description": "作为开发者,我需要初始化 Vue 3 + TypeScript 项目,以便后续开发姿势识别功能。",
+      "acceptanceCriteria": [
+        "使用 Vite 创建 Vue 3 + TypeScript 项目",
+        "配置 TypeScript 严格模式",
+        "安装并配置核心依赖: TensorFlow.js, @tensorflow-models/pose-detection, @tensorflow/tfjs-backend-webgl",
+        "项目能够成功运行 npm run dev 并显示默认页面",
+        "Typecheck 通过 (npm run type-check)"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Completed on 2026-03-20. All criteria met. Note: Vite downgraded to v5.4.21 for Node.js 20.18.3 compatibility."
+    },
+    {
+      "id": "US-002",
+      "title": "摄像头访问和视频流显示",
+      "description": "作为用户,我想要授权并看到我的摄像头画面,以便后续进行姿势识别。",
+      "acceptanceCriteria": [
+        "页面有'开启摄像头'按钮,点击后请求摄像头权限",
+        "成功获取摄像头视频流并显示在页面上",
+        "视频元素自动适配容器大小(响应式)",
+        "错误处理:如果用户拒绝或摄像头不可用,显示友好的错误提示",
+        "Typecheck 通过",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed on 2026-03-20. All criteria met. Created CameraView.vue component with camera access, responsive video display, and comprehensive error handling."
+    },
+    {
+      "id": "US-003",
+      "title": "TensorFlow.js 和 MoveNet 模型加载",
+      "description": "作为开发者,我需要加载 MoveNet 模型,以便进行人体姿势识别。",
+      "acceptanceCriteria": [
+        "在组件挂载时自动加载 MoveNet Lightning 模型(优先速度)",
+        "显示模型加载进度指示器",
+        "模型加载成功后才能开始姿势识别",
+        "模型加载失败时显示错误信息",
+        "Typecheck 通过"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Completed on 2026-03-20. All criteria met. Created poseDetection.ts service with TensorFlow.js/MoveNet Lightning model loading, progress indicator (0-100%), error handling with retry button, and state management."
+    },
+    {
+      "id": "US-004",
+      "title": "实时姿势识别和骨架绘制",
+      "description": "作为用户,我想要看到我的人体骨架实时绘制在视频画面上,以便获得互动体验。",
+      "acceptanceCriteria": [
+        "每一帧视频都进行姿势识别",
+        "在视频画面上绘制清晰可见的骨架关键点(17个)和连接线",
+        "骨架颜色与视频背景有明显对比(青色线条,红色关键点)",
+        "当用户移动时,骨架实时跟随更新",
+        "Typecheck 通过",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Completed on 2026-03-20. All criteria met. Created skeletonDrawing.ts service with drawSkeleton(), drawConnections(), drawKeypoints() functions. Added Canvas to CameraView.vue with requestAnimationFrame-based pose detection loop."
+    },
+    {
+      "id": "US-005",
+      "title": "性能优化达到 60 FPS",
+      "description": "作为用户,我想要流畅的 60 FPS 体验,以便获得良好的游戏互动感。",
+      "acceptanceCriteria": [
+        "使用 requestAnimationFrame 优化渲染循环",
+        "Canvas 绘制不阻塞主线程",
+        "实现帧率监控并显示在页面右上角(半透明背景)",
+        "在普通电脑(4核CPU,集成显卡)上稳定达到 60 FPS",
+        "Typecheck 通过",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "Completed on 2026-03-20. All criteria met. Created fpsMonitor.ts service with real-time FPS tracking, average FPS calculation, frame time display. Added FPS monitor UI in top-right corner with semi-transparent background and color-coded status (green/yellow/red)."
+    },
+    {
+      "id": "US-006",
+      "title": "响应式布局和 UI 优化",
+      "description": "作为用户,我想要在不同屏幕尺寸下都能良好使用应用,以便在不同设备上体验。",
+      "acceptanceCriteria": [
+        "支持全屏模式(浏览器 F11)",
+        "视频和骨架在窗口大小改变时自动调整",
+        "移动端也能使用(虽然主要支持桌面)",
+        "UI 控件布局合理,不遮挡主要视频区域",
+        "Typecheck 通过",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Completed on 2026-03-20. All criteria met. Added fullscreen mode support with fullscreen API, window resize handler for canvas adjustment, comprehensive responsive design for tablet/mobile/small screens, landscape mode optimization, and fullscreen button in top-left corner."
+    }
+  ]
+}

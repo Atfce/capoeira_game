@@ -5,7 +5,7 @@ import {
   addStateListener,
   detectPoses,
   isReady
-} from '../services/poseDetection'
+} from '../services/mediapipeDetection'
 import {
   drawSkeleton,
   clearCanvas,
@@ -271,14 +271,16 @@ async function retryLoadModel() {
 // 获取加载进度文本
 function getLoadingText(): string {
   const progress = modelState.value.loadingProgress
-  if (progress < 30) {
-    return '初始化 TensorFlow.js...'
+  if (progress < 20) {
+    return '创建 MediaPipe Pose 实例...'
   } else if (progress < 40) {
-    return '设置 WebGL 后端...'
+    return '配置模型参数...'
+  } else if (progress < 60) {
+    return '设置回调函数...'
   } else if (progress < 90) {
-    return '加载 MoveNet 模型...'
+    return '初始化模型...'
   } else {
-    return '预热模型...'
+    return '模型加载完成...'
   }
 }
 

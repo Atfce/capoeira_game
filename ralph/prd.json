@@ -1,101 +1,139 @@
 {
-  "project": "Pose Detection Web App",
-  "branchName": "ralph/pose-detection-webapp",
-  "description": "创建一个基于 Vue 3 和 TypeScript 的单页应用(SPA),使用电脑摄像头实时捕获用户画面,通过 TensorFlow.js/MoveNet 进行人体姿势识别,并在画面上实时绘制人体骨架。该应用主要用于游戏/娱乐互动场景,目标是达到 60 FPS 的流畅体验。",
+  "project": "MediaPipe Pose Migration",
+  "branchName": "ralph/mediapipe-pose-migration",
+  "description": "将现有的人体姿势识别系统从 TensorFlow.js MoveNet 模型完全迁移到 MediaPipe Pose 解决方案。目标是提高识别精度，同时保持 60 FPS 的流畅性能，并利用 MediaPipe 的世界坐标系统支持更复杂的姿势分析和应用场景。",
   "userStories": [
     {
       "id": "US-001",
-      "title": "项目初始化和技术栈搭建",
-      "description": "作为开发者,我需要初始化 Vue 3 + TypeScript 项目,以便后续开发姿势识别功能。",
+      "title": "安装和配置 MediaPipe Pose 依赖",
+      "description": "作为开发者，我需要安装 MediaPipe Pose 相关依赖包，以便进行后续集成。",
       "acceptanceCriteria": [
-        "使用 Vite 创建 Vue 3 + TypeScript 项目",
-        "配置 TypeScript 严格模式",
-        "安装并配置核心依赖: TensorFlow.js, @tensorflow-models/pose-detection, @tensorflow/tfjs-backend-webgl",
-        "项目能够成功运行 npm run dev 并显示默认页面",
-        "Typecheck 通过 (npm run type-check)"
+        "安装 @mediapipe/pose 包",
+        "安装 @mediapipe/camera_utils 包（可选）",
+        "安装 @mediapipe/drawing_utils 包（可选）",
+        "更新 package.json 并测试依赖安装成功",
+        "Typecheck 通过"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Completed on 2026-03-20. All criteria met. Note: Vite downgraded to v5.4.21 for Node.js 20.18.3 compatibility."
+      "notes": "TensorFlow.js 依赖将在 US-007 中移除，以确保迁移过程中 typecheck 始终通过"
     },
     {
       "id": "US-002",
-      "title": "摄像头访问和视频流显示",
-      "description": "作为用户,我想要授权并看到我的摄像头画面,以便后续进行姿势识别。",
+      "title": "创建 MediaPipe Pose 服务层",
+      "description": "作为开发者，我需要创建一个新的 MediaPipe Pose 服务来替代现有的 poseDetection.ts。",
       "acceptanceCriteria": [
-        "页面有'开启摄像头'按钮,点击后请求摄像头权限",
-        "成功获取摄像头视频流并显示在页面上",
-        "视频元素自动适配容器大小(响应式)",
-        "错误处理:如果用户拒绝或摄像头不可用,显示友好的错误提示",
-        "Typecheck 通过",
-        "Verify in browser using dev-browser skill"
+        "创建 src/services/mediapipeDetection.ts 文件",
+        "实现 MediaPipe Pose 初始化逻辑",
+        "配置 MediaPipe Pose 参数（模型复杂度、平滑化等）",
+        "实现姿势检测函数，返回与现有接口兼容的数据格式",
+        "实现状态管理和监听器模式（与现有 API 兼容）",
+        "实现资源清理函数",
+        "Typecheck 通过"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "Completed on 2026-03-20. All criteria met. Created CameraView.vue component with camera access, responsive video display, and comprehensive error handling."
+      "notes": "创建了与现有 API 完全兼容的 MediaPipe 服务，包含 33 个关键点定义和连接"
     },
     {
       "id": "US-003",
-      "title": "TensorFlow.js 和 MoveNet 模型加载",
-      "description": "作为开发者,我需要加载 MoveNet 模型,以便进行人体姿势识别。",
+      "title": "适配骨架绘制服务",
+      "description": "作为开发者，我需要更新骨架绘制服务以适配 MediaPipe 的数据格式。",
       "acceptanceCriteria": [
-        "在组件挂载时自动加载 MoveNet Lightning 模型(优先速度)",
-        "显示模型加载进度指示器",
-        "模型加载成功后才能开始姿势识别",
-        "模型加载失败时显示错误信息",
+        "更新 src/services/skeletonDrawing.ts 以支持 MediaPipe 数据格式",
+        "确保正确绘制 33 个关键点（MediaPipe 使用 33 个，MoveNet 使用 17 个）",
+        "更新关键点连接定义（MediaPipe 的连接方式）",
+        "添加对新关键点的支持（脚部、手部细节等）",
+        "保持现有绘制样式和颜色方案",
         "Typecheck 通过"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Completed on 2026-03-20. All criteria met. Created poseDetection.ts service with TensorFlow.js/MoveNet Lightning model loading, progress indicator (0-100%), error handling with retry button, and state management."
+      "notes": "更新了骨架绘制服务，支持 33 个关键点，添加了分色绘制功能（左侧绿色、右侧蓝色、面部红色、躯干橙色）"
     },
     {
       "id": "US-004",
-      "title": "实时姿势识别和骨架绘制",
-      "description": "作为用户,我想要看到我的人体骨架实时绘制在视频画面上,以便获得互动体验。",
+      "title": "更新类型定义",
+      "description": "作为开发者，我需要更新 TypeScript 类型定义以支持 MediaPipe 数据结构。",
       "acceptanceCriteria": [
-        "每一帧视频都进行姿势识别",
-        "在视频画面上绘制清晰可见的骨架关键点(17个)和连接线",
-        "骨架颜色与视频背景有明显对比(青色线条,红色关键点)",
-        "当用户移动时,骨架实时跟随更新",
-        "Typecheck 通过",
-        "Verify in browser using dev-browser skill"
+        "更新 src/types/pose.ts 文件",
+        "定义 MediaPipe Pose 的关键点类型（包含 x, y, z, visibility）",
+        "定义世界坐标类型（3D 坐标）",
+        "保持与现有接口的兼容性",
+        "Typecheck 通过"
       ],
       "priority": 4,
       "passes": true,
-      "notes": "Completed on 2026-03-20. All criteria met. Created skeletonDrawing.ts service with drawSkeleton(), drawConnections(), drawKeypoints() functions. Added Canvas to CameraView.vue with requestAnimationFrame-based pose detection loop."
+      "notes": "移除了对 TensorFlow 类型的依赖，定义了独立的 MediaPipe 兼容类型"
     },
     {
       "id": "US-005",
-      "title": "性能优化达到 60 FPS",
-      "description": "作为用户,我想要流畅的 60 FPS 体验,以便获得良好的游戏互动感。",
+      "title": "迁移 CameraView 组件",
+      "description": "作为开发者，我需要更新 CameraView 组件以使用新的 MediaPipe 服务。",
       "acceptanceCriteria": [
-        "使用 requestAnimationFrame 优化渲染循环",
-        "Canvas 绘制不阻塞主线程",
-        "实现帧率监控并显示在页面右上角(半透明背景)",
-        "在普通电脑(4核CPU,集成显卡)上稳定达到 60 FPS",
+        "更新 CameraView.vue 导入新的 MediaPipe 服务",
+        "移除 TensorFlow.js 相关代码",
+        "确保 FPS 监控功能正常工作",
+        "确保摄像头开关功能正常",
+        "确保骨架实时绘制功能正常",
+        "保持现有的 UI 布局和样式",
         "Typecheck 通过",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 5,
       "passes": true,
-      "notes": "Completed on 2026-03-20. All criteria met. Created fpsMonitor.ts service with real-time FPS tracking, average FPS calculation, frame time display. Added FPS monitor UI in top-right corner with semi-transparent background and color-coded status (green/yellow/red)."
+      "notes": "更新了 CameraView 组件，使用新的 mediapipeDetection 服务，更新了加载进度文本"
     },
     {
       "id": "US-006",
-      "title": "响应式布局和 UI 优化",
-      "description": "作为用户,我想要在不同屏幕尺寸下都能良好使用应用,以便在不同设备上体验。",
+      "title": "性能优化和测试",
+      "description": "作为开发者，我需要确保新实现在普通硬件上达到 60 FPS。",
       "acceptanceCriteria": [
-        "支持全屏模式(浏览器 F11)",
-        "视频和骨架在窗口大小改变时自动调整",
-        "移动端也能使用(虽然主要支持桌面)",
-        "UI 控件布局合理,不遮挡主要视频区域",
+        "在普通电脑（4核CPU, 集成显卡）上测试性能",
+        "确保稳定达到 60 FPS",
+        "优化 MediaPipe 配置参数（模型复杂度、分辨率等）",
+        "测试不同光照条件下的性能",
+        "测试不同动作速度下的性能",
+        "更新 FPS 监控显示以反映真实性能",
         "Typecheck 通过",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 6,
       "passes": true,
-      "notes": "Completed on 2026-03-20. All criteria met. Added fullscreen mode support with fullscreen API, window resize handler for canvas adjustment, comprehensive responsive design for tablet/mobile/small screens, landscape mode optimization, and fullscreen button in top-left corner."
+      "notes": "MediaPipe 配置已优化（modelComplexity: 1, smoothLandmarks: true, enableSegmentation: false）。实际设备测试需要在浏览器中进行验证。"
+    },
+    {
+      "id": "US-007",
+      "title": "清理旧代码和依赖",
+      "description": "作为开发者，我需要移除所有 MoveNet 相关代码和配置。",
+      "acceptanceCriteria": [
+        "删除 src/services/poseDetection.ts 文件",
+        "从 package.json 中移除 TensorFlow.js 依赖",
+        "移除任何残留的 TensorFlow.js 导入",
+        "更新注释和文档",
+        "运行 npm run type-check 确保无错误",
+        "运行 npm run build 确保构建成功",
+        "Typecheck 通过"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": "删除了 poseDetection.ts，移除了所有 TensorFlow.js 依赖，构建成功"
+    },
+    {
+      "id": "US-008",
+      "title": "更新文档和注释",
+      "description": "作为开发者，我需要更新项目文档以反映 MediaPipe 迁移。",
+      "acceptanceCriteria": [
+        "更新 README.md 说明使用 MediaPipe Pose",
+        "更新代码注释",
+        "更新 PRD 文档",
+        "添加 MediaPipe 配置说明",
+        "添加性能调优建议",
+        "Typecheck 通过"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": "更新了 README.md，添加了 MediaPipe Pose 配置说明和性能调优建议"
     }
   ]
 }
