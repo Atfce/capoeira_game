@@ -189,6 +189,15 @@ function getConnectionColor(connection: [number, number]): string {
   return CONFIG.skeleton.color
 }
 
+// 将归一化坐标 (0-1) 转换为像素坐标
+function denormalizeKeypoints(keypoints: Keypoint[], width: number, height: number): Keypoint[] {
+  return keypoints.map(kp => ({
+    ...kp,
+    x: kp.x * width,
+    y: kp.y * height
+  }))
+}
+
 // 绘制骨架到 Canvas
 export function drawSkeleton(
   ctx: CanvasRenderingContext2D,
@@ -200,7 +209,8 @@ export function drawSkeleton(
     return
   }
 
-  const keypoints = pose.keypoints
+  // MediaPipe 返回归一化坐标 (0-1)，需要转换为像素坐标
+  const keypoints = denormalizeKeypoints(pose.keypoints, canvasWidth, canvasHeight)
 
   // 绘制骨架连接线
   drawConnections(ctx, keypoints, canvasWidth, canvasHeight)
